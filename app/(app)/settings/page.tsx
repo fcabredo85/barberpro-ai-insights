@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { BarbershopNameForm } from "@/components/catalog/barbershop-name-form";
 import { CatalogForm } from "@/components/catalog/catalog-form";
 import { CatalogList } from "@/components/catalog/catalog-list";
 import type { CatalogItem } from "@/components/catalog/catalog-config";
@@ -49,9 +50,19 @@ export default async function SettingsPage() {
       />
       {!isOwner ? (
         <p role="status" className="rounded-md border bg-muted px-3 py-2 text-sm">
-          Only the owner can change barbers and services.
+          Only the owner can change the barbershop, barbers and services.
         </p>
-      ) : null}
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Barbershop</CardTitle>
+            <CardDescription>Shown in the header and on receipts.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <BarbershopNameForm currentName={workspace.name} />
+          </CardContent>
+        </Card>
+      )}
       <div className="grid gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader>

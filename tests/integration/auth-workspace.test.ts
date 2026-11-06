@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { TEST_PASSWORD, newClient, signUpUser, uniqueEmail } from "./supabase-test-env";
+import { renameWorkspace } from "@/lib/db/workspace";
+
+import { TEST_PASSWORD, createOwnerWithShop, newClient, signUpUser, uniqueEmail } from "./supabase-test-env";
 
 describe("authentication (Supabase Auth, local)", () => {
   it("signs up a new owner and returns a session", async () => {
@@ -78,5 +80,27 @@ describe("workspace creation (create_barbershop)", () => {
 
     const shopInsert = await client.from("barbershops").insert({ name: "Sneaky", created_by: userId });
     expect(shopInsert.error?.code).toBe("42501");
+  });
+});
+
+describe("barbershop settings (renameWorkspace)", () => {
+  it("lets the owner rename their own barbershop", async () => {
+    const { client, shop } = await createOwnerWithShop("rename-owner");
+    expect(await renameWorkspace(client, shop.id, "Kanto Cuts Annex")).toEqual({ ok: true });
+    const { data } = await client.from("barbershops").select("name").eq("id", shop.id).single();
+    expect(data?.name).toBe("Kanto Cuts Annex");
+  });
+
+  it("does not let another owner rename it (non-disclosing not_found)", async () => {
+    const a = await createOwnerWithShop("rename-a");
+    const b = await createOwnerWithShop("rename-b");
+    expect(await renameWorkspace(b.client, a.shop.id, "Hijacked")).toEqual({ ok: false, reason: "not_found" });
+    const { data } = await a.client.from("barbershops").select("name").eq("id", a.shop.id).single();
+    expect(data?.name).toBe("rename-a Barbershop");
+  });
+
+  it("rejects a blank name at the database", async () => {
+    const { client, shop } = await createOwnerWithShop("rename-blank");
+    expect(await renameWorkspace(client, shop.id, "   ")).toEqual({ ok: false, reason: "invalid" });
   });
 });

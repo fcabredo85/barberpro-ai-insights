@@ -6,7 +6,8 @@ import type { FormState } from "@/lib/auth/form-state";
 import { getOwnerWorkspace } from "@/lib/auth/session";
 import { createBarber, createService, updateBarber, updateService, type CatalogWriteResult } from "@/lib/db/catalog";
 import { createSupabaseServerClient } from "@/lib/db/supabase/server";
-import { fieldErrors } from "@/lib/validation/auth";
+import { renameWorkspace } from "@/lib/db/workspace";
+import { fieldErrors, workspaceNameSchema } from "@/lib/validation/auth";
 import { activeFlagSchema, barberFormSchema, recordIdSchema, serviceFormSchema } from "@/lib/validation/catalog";
 
 const NOT_OWNER: FormState = { status: "error", message: "Only the barbershop owner can change barbers and services." };
@@ -35,6 +36,33 @@ function refreshCatalogPages() {
 
 function success(prev: FormState, message: string): FormState {
   return { status: "success", message, successCount: (prev.successCount ?? 0) + 1 };
+}
+
+// ---------------------------------------------------------------------------
+// Barbershop
+// ---------------------------------------------------------------------------
+
+export async function renameBarbershopAction(prev: FormState, formData: FormData): Promise<FormState> {
+  const workspace = await getOwnerWorkspace();
+  if (!workspace) return { status: "error", message: "Only the barbershop owner can rename the workspace." };
+
+  const values = { name: str(formData, "name") };
+  const parsed = workspaceNameSchema.safeParse(values);
+  if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error), values };
+
+  const supabase = await createSupabaseServerClient();
+  const result = await renameWorkspace(supabase, workspace.barbershopId, parsed.data.name);
+  if (!result.ok) {
+    return {
+      status: "error",
+      message: result.reason === "invalid" ? "Barbershop name must be 1 to 100 characters." : "Could not rename the barbershop. Please try again.",
+      values,
+    };
+  }
+
+  // The name appears in the shared layout header.
+  revalidatePath("/", "layout");
+  return { ...success(prev, "Barbershop name saved."), values: { name: parsed.data.name } };
 }
 
 // ---------------------------------------------------------------------------

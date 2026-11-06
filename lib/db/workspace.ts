@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { SupabaseServerClient } from "@/lib/db/supabase/server";
+import type { DbClient } from "@/lib/db/types";
 import type { Database } from "@/lib/db/database.types";
 
 export type MembershipRole = Database["public"]["Enums"]["membership_role"];
@@ -41,6 +42,21 @@ export async function findWorkspaceForUser(
   if (!data || !data.barbershops) return null;
 
   return { barbershopId: data.barbershop_id, name: data.barbershops.name, role: data.role };
+}
+
+/**
+ * Rename a barbershop. Only `name` is client-updatable (column grant) and the
+ * RLS policy restricts updates to owners; "no row updated" means not allowed
+ * or not found, which callers report the same way (non-disclosing).
+ */
+export async function renameWorkspace(
+  supabase: DbClient,
+  barbershopId: string,
+  name: string,
+): Promise<{ ok: true } | { ok: false; reason: "not_found" | "invalid" | "error" }> {
+  const { data, error } = await supabase.from("barbershops").update({ name }).eq("id", barbershopId).select("id");
+  if (error) return { ok: false, reason: error.code === "23514" ? "invalid" : "error" };
+  return data.length === 1 ? { ok: true } : { ok: false, reason: "not_found" };
 }
 
 /** Creates the barbershop and the caller's owner membership in one transaction. */
