@@ -7,11 +7,17 @@ vi.mock("next/navigation", () => ({
   usePathname: () => pathnameMock.current,
 }));
 
+// Server Actions run only on the server; stub them for client-component rendering.
+vi.mock("@/app/login/actions", () => ({
+  signInAction: vi.fn(),
+  signUpAction: vi.fn(),
+}));
+
+import { AuthForm } from "@/components/auth/auth-form";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { NAV_ITEMS, isActiveNav } from "@/components/layout/nav-items";
 import { cn } from "@/lib/utils";
 import HomePage from "@/app/page";
-import LoginPage from "@/app/login/page";
 
 describe("smoke", () => {
   it("merges conflicting Tailwind classes", () => {
@@ -39,8 +45,7 @@ describe("smoke", () => {
     pathnameMock.current = "/sales";
     render(<AppSidebar />);
 
-    const nav = screen.getByRole("navigation", { name: "Main" });
-    expect(nav).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Main" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sales" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "New sale" })).not.toHaveAttribute("aria-current");
   });
@@ -51,8 +56,22 @@ describe("smoke", () => {
     expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
   });
 
-  it("renders the login placeholder without enabling submission", () => {
-    render(<LoginPage />);
-    expect(screen.getByRole("button", { name: "Sign in" })).toBeDisabled();
+  it("renders the sign-in form with labelled fields and a sign-up link", () => {
+    render(<AuthForm mode="signin" next="/sales" />);
+    expect(screen.getByLabelText("Email")).toHaveAttribute("type", "email");
+    expect(screen.getByLabelText("Password")).toHaveAttribute("autocomplete", "current-password");
+    expect(screen.getByRole("button", { name: "Sign in" })).toBeEnabled();
+    expect(screen.getByRole("link", { name: "Create an account" })).toHaveAttribute("href", "/login?mode=signup");
+  });
+
+  it("renders the sign-up form asking for a new password", () => {
+    render(<AuthForm mode="signup" />);
+    expect(screen.getByLabelText("Password")).toHaveAttribute("autocomplete", "new-password");
+    expect(screen.getByRole("button", { name: "Create account" })).toBeInTheDocument();
+  });
+
+  it("shows a server-provided error message accessibly", () => {
+    render(<AuthForm mode="signin" initialMessage="That confirmation link is invalid." />);
+    expect(screen.getByRole("alert")).toHaveTextContent("That confirmation link is invalid.");
   });
 });

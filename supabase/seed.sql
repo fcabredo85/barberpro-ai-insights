@@ -1,0 +1,4 @@
+-- Local seed data, applied by `npx supabase db reset` after migrations.
+-- Intentionally empty: create accounts and workspaces through the app so every
+-- row is owned by a real authenticated user and passes RLS. Never put real
+-- customer data or credentials here.
