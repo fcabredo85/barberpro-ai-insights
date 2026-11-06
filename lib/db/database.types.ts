@@ -5,7 +5,27 @@ export type Database = {
   
   "public": {
           Tables: {
-            "barbers": {
+            "ai_insight_requests": {
+                  Row: {
+                    "barbershop_id": string,"created_at": string,"id": number,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "barbershop_id": string,"created_at"?: string,"id"?: never,"user_id": string
+                  }
+                  Update: {
+                    "barbershop_id"?: string,"created_at"?: string,"id"?: never,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ai_insight_requests_barbershop_id_fkey"
+      columns: ["barbershop_id"]
+isOneToOne: false
+      referencedRelation: "barbershops"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"barbers": {
                   Row: {
                     "active": boolean,"barbershop_id": string,"commission_rate": number,"created_at": string,"id": string,"name": string,"updated_at": string
                   }
@@ -117,7 +137,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "create_barbershop":
+            "consume_ai_insight_quota":
+{ Args: { "p_barbershop_id": string }; Returns: Json
+                           },
+"create_barbershop":
 { Args: { "p_name": string }; Returns: {
               "created_at": string,
 "created_by": string,

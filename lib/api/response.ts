@@ -8,6 +8,11 @@ export type ApiErrorCode =
   | "VALIDATION_ERROR"
   | "INVALID_SELECTION"
   | "IDEMPOTENCY_CONFLICT"
+  | "RATE_LIMITED"
+  | "AI_NOT_CONFIGURED"
+  | "AI_INVALID_OUTPUT"
+  | "AI_TIMEOUT"
+  | "AI_UNAVAILABLE"
   | "INTERNAL_ERROR";
 
 export interface ApiErrorBody {

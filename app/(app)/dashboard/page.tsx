@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 
+import { AiInsightsPanel } from "@/components/dashboard/ai-insights-panel";
 import { BreakdownChart } from "@/components/dashboard/breakdown-chart";
 import { DashboardFrame } from "@/components/dashboard/dashboard-frame";
 import { KpiCards } from "@/components/dashboard/kpi-cards";
@@ -9,6 +10,7 @@ import { RevenueTrendChart } from "@/components/dashboard/revenue-trend-chart";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MIN_TRANSACTIONS_FOR_INSIGHTS } from "@/lib/ai/facts";
 import { requireWorkspace } from "@/lib/auth/session";
 import { formatCalendarDateLong, manilaToday } from "@/lib/business/dates";
 import { RANGE_PRESETS } from "@/lib/business/report-range";
@@ -61,33 +63,34 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
         <KpiCards totals={report.totals} />
 
-        <div className="grid gap-4 lg:grid-cols-3">
-          <Card className="min-w-0 lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-base">Revenue trend</CardTitle>
-              <CardDescription>Gross sales per day</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RevenueTrendChart daily={report.daily} />
-            </CardContent>
-          </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
+              AI insights
+            </CardTitle>
+            <CardDescription>Three data-backed suggestions for {label}.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AiInsightsPanel
+              key={`${range.from}-${range.to}`}
+              from={range.from}
+              to={range.to}
+              transactionCount={report.totals.transactionCount}
+              minTransactions={MIN_TRANSACTIONS_FOR_INSIGHTS}
+            />
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Sparkles className="h-4 w-4" aria-hidden="true" />
-                AI insights
-              </CardTitle>
-              <CardDescription>Suggestions based on your recorded sales.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-muted-foreground">
-              <p>Coming in the next milestone: three data-backed suggestions for the selected range.</p>
-              <Button variant="outline" size="sm" disabled>
-                Generate insights
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="min-w-0">
+          <CardHeader>
+            <CardTitle className="text-base">Revenue trend</CardTitle>
+            <CardDescription>Gross sales per day</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RevenueTrendChart daily={report.daily} />
+          </CardContent>
+        </Card>
 
         <div className="grid gap-4 xl:grid-cols-2">
           {(

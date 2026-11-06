@@ -7,6 +7,8 @@ Schema, constraints, RLS policies and the workspace function live in
 |---|---|
 | `20261106010000_core_schema.sql` | Enums, the five tenant tables, foreign keys (including same-shop composite keys on `sales`), check constraints, the unique `(barbershop_id, request_key)` key, indexes, `updated_at` triggers |
 | `20261106010100_rls_and_workspace.sql` | Column-level privileges, RLS on every table, `is_member` / `is_owner` helpers, the `created_by` trigger, and the `create_barbershop()` function |
+| `20261106020000_sales_report.sql` | `sales_report()`: tenant-scoped dashboard aggregates (exact sums, Asia/Manila days), runs with the caller's RLS |
+| `20261106030000_ai_rate_limit.sql` | AI insight request log and `consume_ai_insight_quota()`: 2 per user per minute, 10 per barbershop per hour |
 
 Prerequisites: Docker running, and `npm ci` done. The Supabase CLI is a dev
 dependency, so use `npx supabase …`.

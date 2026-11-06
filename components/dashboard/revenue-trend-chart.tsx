@@ -23,7 +23,7 @@ const AXIS_TICK = { fill: "var(--viz-muted)", fontSize: 12 };
 export function RevenueTrendChart({ daily }: RevenueTrendChartProps) {
   if (daily.length < 2) {
     return (
-      <div className="flex h-60 items-center justify-center rounded-md border border-dashed px-4 text-center text-sm text-muted-foreground">
+      <div className="flex h-24 items-center justify-center rounded-md border border-dashed px-4 text-center text-sm text-muted-foreground">
         Choose a range of two or more days to see the daily trend.
       </div>
     );
