@@ -1,0 +1,11 @@
+# BarberPro AI Insights — Cursor rules
+1. Use Next.js 16 App Router (React 19) with strict TypeScript and define explicit types for page props, API payloads, and domain models.
+2. Keep React UI components focused and move reusable displays into `/components` and business calculations into `/lib/business`.
+3. Validate every external request with Zod and return structured HTTP errors without leaking internal diagnostics.
+4. Read authentication from the Supabase server session and verify workspace membership before any tenant-owned read or write.
+5. Enable PostgreSQL Row Level Security for each tenant-owned table and write tests proving cross-tenant requests fail.
+6. Keep OpenAI keys and elevated Supabase credentials in server-only environment variables and never expose them to the browser or Git.
+7. Derive product prices and commission rates on the server and record monetary amounts using integer centavos or exact decimal arithmetic.
+8. Make sale creation atomic and idempotent using unique request keys and transactional PostgreSQL operations.
+9. Use Vercel AI SDK only from a protected server route, send minimal aggregate metrics, and validate structured AI output before rendering.
+10. Add Vitest tests for new business rules, API authorization and AI parsing, and run lint, typecheck, tests and build before merging.
