@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Read-only token: CI never writes to the repository.
+permissions:
+  contents: read
+
+# Cancel superseded runs on the same branch or PR.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  checks:
+    name: Lint, typecheck, unit tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # OpenAI is mocked in every unit test; no API key is needed or provided.
+      - name: Unit tests
+        run: npm test
+
+      # The build needs no secrets: Supabase settings are read at runtime.
+      - name: Production build
+        run: npm run build
+
+  integration:
+    name: Integration tests (throwaway local Supabase)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Starts Postgres + Auth in Docker on the runner and applies supabase/migrations.
+      # This is a disposable database; no hosted project or credentials are involved.
+      - name: Start local Supabase
+        run: npx supabase start
+
+      - name: Auth and tenant-isolation tests
+        run: npm run test:integration
+
+      - name: Stop local Supabase
+        if: always()
+        run: npx supabase stop --no-backup
