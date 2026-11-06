@@ -43,7 +43,8 @@ describe("createSaleSchema (POST /api/sales body)", () => {
 
   it("requires a UUID request key for idempotency", () => {
     expect(createSaleSchema.safeParse({ ...validSale(), requestKey: "abc" }).success).toBe(false);
-    const { requestKey: _omit, ...withoutKey } = validSale();
+    const withoutKey: Partial<ReturnType<typeof validSale>> = validSale();
+    delete withoutKey.requestKey;
     expect(createSaleSchema.safeParse(withoutKey).success).toBe(false);
   });
 

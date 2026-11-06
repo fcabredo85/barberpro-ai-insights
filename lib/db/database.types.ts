@@ -136,6 +136,9 @@ isOneToOne: false
                            },
 "is_owner":
 { Args: { "p_barbershop_id": string }; Returns: boolean
+                           },
+"sales_report":
+{ Args: { "p_barbershop_id": string,"p_end": string,"p_start": string }; Returns: Json
                            }
           }
           Enums: {

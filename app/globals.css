@@ -27,6 +27,12 @@
     --chart-2: 160 60% 40%;
     --chart-3: 30 80% 55%;
     --radius: 0.5rem;
+    /* Data-viz tokens (validated: series vs card surface, light) */
+    --viz-series-1: #2a78d6;
+    --viz-grid: #e1e0d9;
+    --viz-axis: #c3c2b7;
+    --viz-muted: #898781;
+    --viz-surface: #ffffff;
   }
 
   .dark {
@@ -52,6 +58,11 @@
     --chart-1: 217 91% 60%;
     --chart-2: 160 60% 50%;
     --chart-3: 30 80% 60%;
+    --viz-series-1: #3987e5;
+    --viz-grid: #2c2c2a;
+    --viz-axis: #383835;
+    --viz-muted: #898781;
+    --viz-surface: #09090b;
   }
 
   * {

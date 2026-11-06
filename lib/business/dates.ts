@@ -80,6 +80,27 @@ const manilaDateTime = new Intl.DateTimeFormat("en-PH", {
   minute: "2-digit",
 });
 
+const calendarShort = new Intl.DateTimeFormat("en-PH", { timeZone: "UTC", month: "short", day: "numeric" });
+const calendarLong = new Intl.DateTimeFormat("en-PH", {
+  timeZone: "UTC",
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
+
+/** Label a Manila calendar date ("YYYY-MM-DD"), e.g. "Nov 6". The date is already Manila-local. */
+export function formatCalendarDateShort(isoDate: string): string {
+  const ms = parseCalendarDate(isoDate);
+  return ms === null ? isoDate : calendarShort.format(new Date(ms));
+}
+
+/** e.g. "Fri, Nov 6, 2026". */
+export function formatCalendarDateLong(isoDate: string): string {
+  const ms = parseCalendarDate(isoDate);
+  return ms === null ? isoDate : calendarLong.format(new Date(ms));
+}
+
 /** Display a stored UTC timestamp in Manila time, e.g. "Nov 6, 2026, 2:05 PM". */
 export function formatManilaDateTime(isoTimestamp: string): string {
   return manilaDateTime.format(new Date(isoTimestamp));

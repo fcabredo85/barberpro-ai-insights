@@ -118,12 +118,26 @@ export function formatPeso(centavos: Centavos): string {
   return `${whole}.${String(centavos % 100).padStart(2, "0")}`;
 }
 
+const compactFormatter = new Intl.NumberFormat("en-PH", { notation: "compact", maximumFractionDigits: 1 });
+
+/** Axis ticks only, e.g. 0 -> "₱0", 150_000 -> "₱1.5K", 120_000_000 -> "₱1.2M". */
+export function formatPesoCompact(centavos: Centavos): string {
+  return `₱${compactFormatter.format(Math.round(centavos / 100))}`;
+}
+
 /** Display only, e.g. 4000 -> "40%", 1250 -> "12.5%". */
 export function formatPercent(bp: BasisPoints): string {
   assertSafeNonNegativeInteger(bp, "basis points");
   const whole = Math.floor(bp / 100);
   const fraction = String(bp % 100).padStart(2, "0").replace(/0+$/, "");
   return fraction ? `${whole}.${fraction}%` : `${whole}%`;
+}
+
+/** A share of a whole, always one decimal so columns align, e.g. 3369 -> "33.7%", 970 -> "9.7%". */
+export function formatShare(bp: BasisPoints): string {
+  assertSafeNonNegativeInteger(bp, "basis points");
+  const tenths = divideRoundHalfUp(bp, 10); // tenths of a percent
+  return `${Math.floor(tenths / 10)}.${tenths % 10}%`;
 }
 
 /** Editable form value for a rate, e.g. 4000 -> "40", 1250 -> "12.5". */
