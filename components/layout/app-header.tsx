@@ -12,7 +12,7 @@ interface AppHeaderProps {
 
 export function AppHeader({ workspaceName, userEmail }: AppHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 print:hidden z-40 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <MobileNav />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{workspaceName}</p>

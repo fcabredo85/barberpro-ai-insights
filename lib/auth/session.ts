@@ -42,3 +42,12 @@ export async function requireWorkspace(): Promise<{ user: User; workspace: Works
   if (!workspace) redirect("/onboarding");
   return { user, workspace };
 }
+
+/**
+ * For Server Actions that change the catalog: returns the workspace only when
+ * the caller is its owner, otherwise null (callers return a safe error).
+ */
+export async function getOwnerWorkspace(): Promise<Workspace | null> {
+  const workspace = await getCurrentWorkspace();
+  return workspace?.role === "owner" ? workspace : null;
+}

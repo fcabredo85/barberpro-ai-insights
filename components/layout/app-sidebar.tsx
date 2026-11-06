@@ -4,7 +4,7 @@ import { NavLinks } from "./nav-links";
 /** Fixed sidebar shown from the `md` breakpoint up. */
 export function AppSidebar() {
   return (
-    <aside className="hidden w-60 shrink-0 border-r bg-card md:flex md:flex-col">
+    <aside className="hidden w-60 print:hidden shrink-0 border-r bg-card md:flex md:flex-col">
       <div className="flex h-14 items-center border-b px-4">
         <Brand />
       </div>
