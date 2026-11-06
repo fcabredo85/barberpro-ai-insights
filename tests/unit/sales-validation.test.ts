@@ -65,7 +65,7 @@ describe("catalog form validation", () => {
     });
   });
 
-  it.each(["101", "-5", "abc", "", "12.345"])("rejects commission rate %j outside 0..100%%", (commissionRate) => {
+  it.each(["101", "-5", "abc", "", "12.345"])("rejects commission rate %j outside 0 to 100 percent", (commissionRate) => {
     const result = barberFormSchema.safeParse({ name: "Paolo", commissionRate });
     expect(result.success).toBe(false);
   });

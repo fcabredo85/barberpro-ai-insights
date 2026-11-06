@@ -19,8 +19,8 @@ function CatalogRow({ kind, item }: { kind: CatalogKind; item: CatalogItem }) {
   return (
     <li className={cn("space-y-3 py-3", !item.active && "opacity-70")}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-medium">{item.name}</p>
+        <div className="min-w-0 basis-full sm:basis-0 sm:flex-1">
+          <p className="break-words font-medium sm:truncate">{item.name}</p>
           <p className="text-sm tabular-nums text-muted-foreground">{item.detail}</p>
         </div>
         <Badge variant={item.active ? "secondary" : "outline"}>{item.active ? "Active" : "Inactive"}</Badge>

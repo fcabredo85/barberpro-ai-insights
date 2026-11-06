@@ -98,7 +98,7 @@ describe("peso and rate parsing", () => {
     ["0", 0],
     ["100", 10_000],
     ["40%", 4_000],
-  ])("parses %j%% as %i basis points", (input, expected) => {
+  ])("parses %j percent as %i basis points", (input, expected) => {
     expect(parsePercentToBasisPoints(input)).toBe(expected);
   });
 
