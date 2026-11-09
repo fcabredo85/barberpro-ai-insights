@@ -40,6 +40,23 @@ async function book(client: TestClient, shopId: string, input: BookAppointmentIn
   return bookAppointment(client, shopId, input);
 }
 
+/**
+ * Fires bookings for the same barber at once. A raw database error (as opposed
+ * to a structured { ok: false } result) fails the test WITH its Postgres error
+ * code, e.g. 40P01, so an intermittent CI failure is diagnosable from the log.
+ */
+async function bookConcurrently(
+  s: { client: TestClient; shop: { id: string }; barberId: string; serviceId: string },
+  times: string[],
+) {
+  const settled = await Promise.allSettled(times.map((t) => book(s.client, s.shop.id, booking(s, at(TOMORROW, t)))));
+  const errors = settled.flatMap((r) =>
+    r.status === "rejected" ? [`${(r.reason as Error).message} (code: ${String((r.reason as Error).cause)})`] : [],
+  );
+  expect(errors).toEqual([]);
+  return settled.map((r) => (r as PromiseFulfilledResult<Awaited<ReturnType<typeof book>>>).value);
+}
+
 describe("service duration", () => {
   it("defaults to 30 minutes and accepts 45 or 60", async () => {
     const owner = await createOwnerWithShop("appt-duration");
@@ -100,12 +117,18 @@ describe("book_appointment rules", () => {
 
   it("allows only one of two simultaneous bookings for the same time", async () => {
     const s = await shopWithCatalog("appt-race", 60);
-    const results = await Promise.all([
-      book(s.client, s.shop.id, booking(s, at(TOMORROW, "16:00"))),
-      book(s.client, s.shop.id, booking(s, at(TOMORROW, "16:00"))),
-    ]);
+    const results = await bookConcurrently(s, ["16:00", "16:00"]);
     expect(results.filter((r) => r.ok)).toHaveLength(1);
     expect(results.filter((r) => !r.ok)).toEqual([{ ok: false, reason: "slot_taken" }]);
+  });
+
+  it("handles many simultaneous overlapping bookings cleanly (one wins, the rest get slot_taken)", async () => {
+    const s = await shopWithCatalog("appt-race-many", 60);
+    // Same barber, overlapping (not identical) start times, all fired at once.
+    const times = ["13:00", "13:00", "13:15", "13:30", "12:15", "13:45"];
+    const results = await bookConcurrently(s, times);
+    expect(results.filter((r) => r.ok)).toHaveLength(1);
+    expect(results.filter((r) => !r.ok)).toEqual(Array(times.length - 1).fill({ ok: false, reason: "slot_taken" }));
   });
 
   it.each([
