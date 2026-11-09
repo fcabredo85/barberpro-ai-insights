@@ -1,5 +1,5 @@
 /** Path prefixes that require a signed-in user. */
-export const PROTECTED_PREFIXES = ["/dashboard", "/sales", "/settings", "/onboarding"] as const;
+export const PROTECTED_PREFIXES = ["/dashboard", "/sales", "/settings", "/studio", "/appointments", "/onboarding"] as const;
 
 /** Pages a signed-in user has no reason to see. */
 const GUEST_ONLY_PATHS = ["/login"] as const;

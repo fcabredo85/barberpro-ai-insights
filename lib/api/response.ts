@@ -13,6 +13,12 @@ export type ApiErrorCode =
   | "AI_INVALID_OUTPUT"
   | "AI_TIMEOUT"
   | "AI_UNAVAILABLE"
+  | "AI_REFUSED"
+  | "PAYLOAD_TOO_LARGE"
+  | "INVALID_UPLOAD"
+  | "CONSENT_REQUIRED"
+  | "NOT_FOUND"
+  | "STORAGE_UNAVAILABLE"
   | "INTERNAL_ERROR";
 
 export interface ApiErrorBody {

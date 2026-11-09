@@ -9,8 +9,12 @@ Schema, constraints, RLS policies and the workspace function live in
 | `20261106010100_rls_and_workspace.sql` | Column-level privileges, RLS on every table, `is_member` / `is_owner` helpers, the `created_by` trigger, and the `create_barbershop()` function |
 | `20261106020000_sales_report.sql` | `sales_report()`: tenant-scoped dashboard aggregates (exact sums, Asia/Manila days), runs with the caller's RLS |
 | `20261106030000_ai_rate_limit.sql` | AI insight request log and `consume_ai_insight_quota()`: 2 per user per minute, 10 per barbershop per hour |
+| `20261108010000_tryon_consent_and_ai_jobs.sql` | Virtual Try-On: `photo_consents`, `ai_generation_jobs`, `start_ai_job()` (consent + quota + idempotency gate before any AI call), `finish_ai_job()` |
+| `20261108020000_saved_looks_storage.sql` | Save Look: private `images` storage bucket and policies (shop members only), `saved_looks`, `create_saved_look()`, `delete_saved_look()` |
+| `20261108030000_appointments.sql` | Booking: `services.duration_minutes` (30/45/60), `appointments` with a no-overlap exclusion constraint (`btree_gist`), `booking_window()` (10:00–21:00 Asia/Manila), `appointment_slots()`, `book_appointment()`, `set_appointment_status()` (completing records the sale atomically) |
 
-Prerequisites: Docker running, and `npm ci` done. The Supabase CLI is a dev
+Prerequisites: Docker running, and `npm ci` done. Local Storage is enabled in
+`config.toml` (needed for the private `images` bucket). The Supabase CLI is a dev
 dependency, so use `npx supabase …`.
 
 ## Local development

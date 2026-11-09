@@ -1,4 +1,4 @@
-import { LayoutDashboard, PlusCircle, Receipt, Settings, type LucideIcon } from "lucide-react";
+import { CalendarDays, LayoutDashboard, PlusCircle, Receipt, Scissors, Settings, type LucideIcon } from "lucide-react";
 
 export interface NavItem {
   href: string;
@@ -11,6 +11,8 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/sales/new", label: "New sale", icon: PlusCircle },
   { href: "/sales", label: "Sales", icon: Receipt },
+  { href: "/appointments", label: "Appointments", icon: CalendarDays },
+  { href: "/studio", label: "Try-On Studio", icon: Scissors },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
