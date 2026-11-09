@@ -29,6 +29,8 @@ describe("smoke", () => {
       "/dashboard",
       "/sales/new",
       "/sales",
+      "/appointments",
+      "/studio",
       "/settings",
     ]);
   });

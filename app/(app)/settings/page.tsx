@@ -37,9 +37,9 @@ export default async function SettingsPage() {
   const serviceItems: CatalogItem[] = services.map((s) => ({
     id: s.id,
     name: s.name,
-    detail: formatPeso(s.priceCentavos),
+    detail: `${formatPeso(s.priceCentavos)} · ${s.durationMinutes} min`,
     active: s.active,
-    editValues: { name: s.name, price: centavosToPesoInput(s.priceCentavos) },
+    editValues: { name: s.name, price: centavosToPesoInput(s.priceCentavos), durationMinutes: String(s.durationMinutes) },
   }));
 
   return (

@@ -63,6 +63,15 @@ export const CATALOG_CONFIG = {
         hint: "Price per service in pesos.",
         maxLength: 13,
       },
+      {
+        name: "durationMinutes",
+        label: "Duration",
+        placeholder: "30",
+        inputMode: "numeric",
+        suffix: "min",
+        hint: "Appointment length: 30, 45 or 60 minutes.",
+        maxLength: 2,
+      },
     ],
   },
 } as const satisfies Record<CatalogKind, {

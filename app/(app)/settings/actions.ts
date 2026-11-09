@@ -8,6 +8,7 @@ import { createBarber, createService, updateBarber, updateService, type CatalogW
 import { createSupabaseServerClient } from "@/lib/db/supabase/server";
 import { renameWorkspace } from "@/lib/db/workspace";
 import { fieldErrors, workspaceNameSchema } from "@/lib/validation/auth";
+import { parseServiceDuration } from "@/lib/booking/rules";
 import { activeFlagSchema, barberFormSchema, recordIdSchema, serviceFormSchema } from "@/lib/validation/catalog";
 
 const NOT_OWNER: FormState = { status: "error", message: "Only the barbershop owner can change barbers and services." };
@@ -32,6 +33,7 @@ function failure(result: Exclude<CatalogWriteResult, { ok: true }>, values: Form
 function refreshCatalogPages() {
   revalidatePath("/settings");
   revalidatePath("/sales/new");
+  revalidatePath("/appointments/new");
 }
 
 function success(prev: FormState, message: string): FormState {
@@ -119,13 +121,23 @@ export async function saveServiceAction(prev: FormState, formData: FormData): Pr
   const workspace = await getOwnerWorkspace();
   if (!workspace) return NOT_OWNER;
 
-  const values = { name: str(formData, "name"), price: str(formData, "price") };
-  const parsed = serviceFormSchema.safeParse(values);
-  if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error), values };
+  const values = { name: str(formData, "name"), price: str(formData, "price"), durationMinutes: str(formData, "durationMinutes") };
+  const parsed = serviceFormSchema.safeParse({ name: values.name, price: values.price });
+  // Duration is validated separately so the existing service schema stays unchanged.
+  // Blank means the default (30); existing forms without the field keep working.
+  const durationMinutes = parseServiceDuration(values.durationMinutes?.trim() || "30");
+  const durationError = durationMinutes === null ? { durationMinutes: "Duration must be 30, 45 or 60 minutes." } : {};
+  if (!parsed.success || durationMinutes === null) {
+    return {
+      status: "error",
+      fieldErrors: { ...(parsed.success ? {} : fieldErrors(parsed.error)), ...durationError },
+      values,
+    };
+  }
 
   const rawId = str(formData, "id");
   const supabase = await createSupabaseServerClient();
-  const input = { name: parsed.data.name, priceCentavos: parsed.data.price };
+  const input = { name: parsed.data.name, priceCentavos: parsed.data.price, durationMinutes };
 
   let result: CatalogWriteResult;
   if (rawId) {

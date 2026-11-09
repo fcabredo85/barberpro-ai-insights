@@ -21,6 +21,8 @@ export interface Service {
   id: string;
   name: string;
   priceCentavos: Centavos;
+  /** Appointment length: 30, 45 or 60 minutes. */
+  durationMinutes: number;
   active: boolean;
 }
 
@@ -115,7 +117,7 @@ export async function listServices(
 ): Promise<Service[]> {
   let query = db
     .from("services")
-    .select("id, name, price, active")
+    .select("id, name, price, duration_minutes, active")
     .eq("barbershop_id", barbershopId)
     .order("active", { ascending: false })
     .order("name", { ascending: true });
@@ -127,6 +129,7 @@ export async function listServices(
     id: row.id,
     name: row.name,
     priceCentavos: decimalToCentavos(row.price),
+    durationMinutes: row.duration_minutes,
     active: row.active,
   }));
 }
@@ -134,11 +137,16 @@ export async function listServices(
 export async function createService(
   db: DbClient,
   barbershopId: string,
-  input: { name: string; priceCentavos: Centavos },
+  input: { name: string; priceCentavos: Centavos; durationMinutes?: number },
 ): Promise<CatalogWriteResult> {
   const { data, error } = await db
     .from("services")
-    .insert({ barbershop_id: barbershopId, name: input.name, price: dbAmount(input.priceCentavos) })
+    .insert({
+      barbershop_id: barbershopId,
+      name: input.name,
+      price: dbAmount(input.priceCentavos),
+      ...(input.durationMinutes !== undefined && { duration_minutes: input.durationMinutes }),
+    })
     .select("id")
     .single();
   return error ? writeFailure(error) : { ok: true, id: data.id };
@@ -148,13 +156,14 @@ export async function updateService(
   db: DbClient,
   barbershopId: string,
   id: string,
-  changes: { name?: string; priceCentavos?: Centavos; active?: boolean },
+  changes: { name?: string; priceCentavos?: Centavos; durationMinutes?: number; active?: boolean },
 ): Promise<CatalogWriteResult> {
   const { data, error } = await db
     .from("services")
     .update({
       ...(changes.name !== undefined && { name: changes.name }),
       ...(changes.priceCentavos !== undefined && { price: dbAmount(changes.priceCentavos) }),
+      ...(changes.durationMinutes !== undefined && { duration_minutes: changes.durationMinutes }),
       ...(changes.active !== undefined && { active: changes.active }),
     })
     .eq("id", id)

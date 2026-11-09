@@ -5,7 +5,33 @@ export type Database = {
   
   "public": {
           Tables: {
-            "ai_insight_requests": {
+            "ai_generation_jobs": {
+                  Row: {
+                    "barbershop_id": string,"completed_at": string | null,"consent_id": string | null,"created_at": string,"duration_ms": number | null,"error_code": string | null,"feature": Database["public"]['Enums']["ai_feature"],"id": string,"model": string,"request_key": string,"status": Database["public"]['Enums']["ai_job_status"],"style_id": string | null,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "barbershop_id": string,"completed_at"?: string | null,"consent_id"?: string | null,"created_at"?: string,"duration_ms"?: number | null,"error_code"?: string | null,"feature": Database["public"]['Enums']["ai_feature"],"id"?: string,"model": string,"request_key": string,"status"?: Database["public"]['Enums']["ai_job_status"],"style_id"?: string | null,"user_id": string
+                  }
+                  Update: {
+                    "barbershop_id"?: string,"completed_at"?: string | null,"consent_id"?: string | null,"created_at"?: string,"duration_ms"?: number | null,"error_code"?: string | null,"feature"?: Database["public"]['Enums']["ai_feature"],"id"?: string,"model"?: string,"request_key"?: string,"status"?: Database["public"]['Enums']["ai_job_status"],"style_id"?: string | null,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ai_generation_jobs_barbershop_id_fkey"
+      columns: ["barbershop_id"]
+isOneToOne: false
+      referencedRelation: "barbershops"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ai_generation_jobs_consent_id_fkey"
+      columns: ["consent_id"]
+isOneToOne: false
+      referencedRelation: "photo_consents"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"ai_insight_requests": {
                   Row: {
                     "barbershop_id": string,"created_at": string,"id": number,"user_id": string
                   }
@@ -23,6 +49,50 @@ export type Database = {
 isOneToOne: false
       referencedRelation: "barbershops"
       referencedColumns: ["id"]
+    }
+                  ]
+                },"appointments": {
+                  Row: {
+                    "barber_id": string,"barbershop_id": string,"created_at": string,"created_by": string | null,"customer_name": string,"customer_phone": string | null,"ends_at": string,"id": string,"notes": string | null,"request_key": string,"sale_id": string | null,"saved_look_id": string | null,"service_id": string,"starts_at": string,"status": Database["public"]['Enums']["appointment_status"],"style_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "barber_id": string,"barbershop_id": string,"created_at"?: string,"created_by"?: string | null,"customer_name": string,"customer_phone"?: string | null,"ends_at": string,"id"?: string,"notes"?: string | null,"request_key": string,"sale_id"?: string | null,"saved_look_id"?: string | null,"service_id": string,"starts_at": string,"status"?: Database["public"]['Enums']["appointment_status"],"style_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "barber_id"?: string,"barbershop_id"?: string,"created_at"?: string,"created_by"?: string | null,"customer_name"?: string,"customer_phone"?: string | null,"ends_at"?: string,"id"?: string,"notes"?: string | null,"request_key"?: string,"sale_id"?: string | null,"saved_look_id"?: string | null,"service_id"?: string,"starts_at"?: string,"status"?: Database["public"]['Enums']["appointment_status"],"style_id"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "appointments_barber_same_shop_fkey"
+      columns: ["barbershop_id","barber_id"]
+isOneToOne: false
+      referencedRelation: "barbers"
+      referencedColumns: ["barbershop_id","id"]
+    },{
+      foreignKeyName: "appointments_barbershop_id_fkey"
+      columns: ["barbershop_id"]
+isOneToOne: false
+      referencedRelation: "barbershops"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "appointments_sale_id_fkey"
+      columns: ["sale_id"]
+isOneToOne: true
+      referencedRelation: "sales"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "appointments_saved_look_id_fkey"
+      columns: ["saved_look_id"]
+isOneToOne: false
+      referencedRelation: "saved_looks"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "appointments_service_same_shop_fkey"
+      columns: ["barbershop_id","service_id"]
+isOneToOne: false
+      referencedRelation: "services"
+      referencedColumns: ["barbershop_id","id"]
     }
                   ]
                 },"barbers": {
@@ -79,6 +149,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"photo_consents": {
+                  Row: {
+                    "barbershop_id": string,"granted_at": string,"id": string,"notice_version": string,"purpose": string,"recorded_by": string | null,"revoked_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "barbershop_id": string,"granted_at"?: string,"id"?: string,"notice_version": string,"purpose": string,"recorded_by"?: string | null,"revoked_at"?: string | null
+                  }
+                  Update: {
+                    "barbershop_id"?: string,"granted_at"?: string,"id"?: string,"notice_version"?: string,"purpose"?: string,"recorded_by"?: string | null,"revoked_at"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "photo_consents_barbershop_id_fkey"
+      columns: ["barbershop_id"]
+isOneToOne: false
+      referencedRelation: "barbershops"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"sales": {
                   Row: {
                     "barber_id": string,"barbershop_id": string,"commission_amount": number,"commission_rate": number,"created_at": string,"created_by": string,"gross_total": number,"id": string,"occurred_at": string,"payment_method": Database["public"]['Enums']["payment_method"],"quantity": number,"request_key": string,"service_id": string,"unit_price": number
@@ -111,16 +201,48 @@ isOneToOne: false
       referencedColumns: ["barbershop_id","id"]
     }
                   ]
-                },"services": {
+                },"saved_looks": {
                   Row: {
-                    "active": boolean,"barbershop_id": string,"created_at": string,"id": string,"name": string,"price": number,"updated_at": string
+                    "barbershop_id": string,"created_at": string,"created_by": string | null,"customer_label": string,"delete_after": string,"favorite": boolean,"id": string,"original_path": string,"preview_path": string,"storage_consent_id": string,"style_id": string,"title": string | null,"tryon_job_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "active"?: boolean,"barbershop_id": string,"created_at"?: string,"id"?: string,"name": string,"price": number,"updated_at"?: string
+                    "barbershop_id": string,"created_at"?: string,"created_by"?: string | null,"customer_label": string,"delete_after": string,"favorite"?: boolean,"id": string,"original_path": string,"preview_path": string,"storage_consent_id": string,"style_id": string,"title"?: string | null,"tryon_job_id"?: string | null
                   }
                   Update: {
-                    "active"?: boolean,"barbershop_id"?: string,"created_at"?: string,"id"?: string,"name"?: string,"price"?: number,"updated_at"?: string
+                    "barbershop_id"?: string,"created_at"?: string,"created_by"?: string | null,"customer_label"?: string,"delete_after"?: string,"favorite"?: boolean,"id"?: string,"original_path"?: string,"preview_path"?: string,"storage_consent_id"?: string,"style_id"?: string,"title"?: string | null,"tryon_job_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "saved_looks_barbershop_id_fkey"
+      columns: ["barbershop_id"]
+isOneToOne: false
+      referencedRelation: "barbershops"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "saved_looks_storage_consent_id_fkey"
+      columns: ["storage_consent_id"]
+isOneToOne: false
+      referencedRelation: "photo_consents"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "saved_looks_tryon_job_id_fkey"
+      columns: ["tryon_job_id"]
+isOneToOne: true
+      referencedRelation: "ai_generation_jobs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"services": {
+                  Row: {
+                    "active": boolean,"barbershop_id": string,"created_at": string,"duration_minutes": number,"id": string,"name": string,"price": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"barbershop_id": string,"created_at"?: string,"duration_minutes"?: number,"id"?: string,"name": string,"price": number,"updated_at"?: string
+                  }
+                  Update: {
+                    "active"?: boolean,"barbershop_id"?: string,"created_at"?: string,"duration_minutes"?: number,"id"?: string,"name"?: string,"price"?: number,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -137,7 +259,19 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "consume_ai_insight_quota":
+            "appointment_slots":
+{ Args: { "p_barber_id": string,"p_barbershop_id": string,"p_day": string,"p_service_id": string }; Returns: Json
+                           },
+"book_appointment":
+{ Args: { "p_barber_id": string,"p_barbershop_id": string,"p_customer_name": string,"p_customer_phone": string,"p_notes": string,"p_request_key": string,"p_saved_look_id": string,"p_service_id": string,"p_starts_at": string,"p_style_id": string }; Returns: Json
+                           },
+"booking_window":
+{ Args: Record<PropertyKey, never>; Returns: Record<string, unknown>
+                           },
+"can_access_look_object":
+{ Args: { "p_name": string }; Returns: boolean
+                           },
+"consume_ai_insight_quota":
 { Args: { "p_barbershop_id": string }; Returns: Json
                            },
 "create_barbershop":
@@ -154,6 +288,15 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"create_saved_look":
+{ Args: { "p_barbershop_id": string,"p_customer_label": string,"p_look_id": string,"p_notice_version": string,"p_original_path": string,"p_preview_path": string,"p_title": string,"p_tryon_job_id": string }; Returns: Json
+                           },
+"delete_saved_look":
+{ Args: { "p_look_id": string }; Returns: boolean
+                           },
+"finish_ai_job":
+{ Args: { "p_duration_ms"?: number,"p_error_code"?: string,"p_job_id": string,"p_status": Database["public"]['Enums']["ai_job_status"] }; Returns: boolean
+                           },
 "is_member":
 { Args: { "p_barbershop_id": string }; Returns: boolean
                            },
@@ -162,10 +305,16 @@ isOneToOne: false
                            },
 "sales_report":
 { Args: { "p_barbershop_id": string,"p_end": string,"p_start": string }; Returns: Json
+                           },
+"set_appointment_status":
+{ Args: { "p_appointment_id": string,"p_payment_method"?: Database["public"]['Enums']["payment_method"],"p_status": Database["public"]['Enums']["appointment_status"] }; Returns: Json
+                           },
+"start_ai_job":
+{ Args: { "p_barbershop_id": string,"p_consent_notice_version"?: string,"p_feature": Database["public"]['Enums']["ai_feature"],"p_model": string,"p_request_key": string,"p_style_id"?: string }; Returns: Json
                            }
           }
           Enums: {
-            "membership_role": "owner"|"manager","payment_method": "cash"|"gcash"
+            "ai_feature": "tryon_preview"|"hairstyle_advice","ai_job_status": "pending"|"succeeded"|"failed","appointment_status": "confirmed"|"cancelled"|"completed"|"no_show","membership_role": "owner"|"manager","payment_method": "cash"|"gcash"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -281,7 +430,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "membership_role": ["owner", "manager"],"payment_method": ["cash", "gcash"]
+            "ai_feature": ["tryon_preview", "hairstyle_advice"],"ai_job_status": ["pending", "succeeded", "failed"],"appointment_status": ["confirmed", "cancelled", "completed", "no_show"],"membership_role": ["owner", "manager"],"payment_method": ["cash", "gcash"]
           }
         }
 } as const
