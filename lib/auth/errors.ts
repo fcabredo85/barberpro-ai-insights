@@ -27,6 +27,12 @@ export function authErrorMessage(error: MaybeCodedError | null | undefined): str
       return "Too many attempts. Please wait a few minutes and try again.";
     case "signup_disabled":
       return "New sign-ups are currently disabled.";
+    case "same_password":
+      return "Choose a password different from your current one.";
+    case "reauthentication_needed":
+    case "session_not_found":
+    case "session_expired":
+      return "Your session has expired. Please sign in again.";
     default:
       if (error?.status === 429) return "Too many attempts. Please wait a few minutes and try again.";
       return "Something went wrong. Please try again.";

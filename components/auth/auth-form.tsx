@@ -51,6 +51,13 @@ export function AuthForm({ mode, next, initialMessage }: AuthFormProps) {
           minLength={isSignUp ? 8 : undefined}
           error={state.fieldErrors?.password}
         />
+        {isSignUp ? null : (
+          <p className="-mt-2 text-right text-sm">
+            <Link href="/forgot-password" className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+              Forgot password?
+            </Link>
+          </p>
+        )}
         <Button type="submit" className="w-full" disabled={pending}>
           {pending ? "Please wait…" : isSignUp ? "Create account" : "Sign in"}
         </Button>

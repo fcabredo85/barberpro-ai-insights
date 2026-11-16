@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { ChangePasswordForm } from "@/components/auth/password-forms";
 import { BarbershopNameForm } from "@/components/catalog/barbershop-name-form";
 import { CatalogForm } from "@/components/catalog/catalog-form";
 import { CatalogList } from "@/components/catalog/catalog-list";
@@ -19,7 +20,7 @@ import { createSupabaseServerClient } from "@/lib/db/supabase/server";
 export const metadata: Metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
-  const { workspace } = await requireWorkspace();
+  const { user, workspace } = await requireWorkspace();
   const supabase = await createSupabaseServerClient();
   const [barbers, services] = await Promise.all([
     listBarbers(supabase, workspace.barbershopId),
@@ -85,6 +86,15 @@ export default async function SettingsPage() {
           </CardContent>
         </Card>
       </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Password</CardTitle>
+          <CardDescription>Change the password you use to sign in{user.email ? ` as ${user.email}` : ""}.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ChangePasswordForm />
+        </CardContent>
+      </Card>
     </>
   );
 }
