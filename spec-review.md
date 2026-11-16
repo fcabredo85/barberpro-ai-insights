@@ -1,6 +1,6 @@
 # Specification Review — BarberPro AI Insights
 
-**Status:** Draft reviewed for assignment completeness; implementation and validation are still outstanding.
+**Status:** Reviewed; implemented and deployed at https://barberpro-ai-insights.vercel.app (updated 2026-11-16). Remaining items are listed below.
 
 ## Review checklist
 | Area | Review finding | Resolution in spec v1.1 |
@@ -17,14 +17,14 @@
 | Dependencies | Next.js 14.2.33 (final 14.x) has unpatched critical/high advisories | Upgraded to Next.js 16.4.5 + React 19 (spec decision 7, 2026-11-06); `npm audit` clean |
 
 ## Remaining validation tasks
-- Interview actual barbershop operators and record anonymized evidence; do not claim this has happened.
-- Generate real repo with five meaningful commits and implement all screens.
-- Run tests/CI and capture outputs; confirm RLS with two different user accounts.
-- Deploy and verify the public URL in incognito; record demo and write personal reflection.
+- Interview actual barbershop operators and record anonymized evidence; do not claim this has happened. **Still pending.**
+- ~~Generate real repo with five meaningful commits and implement all screens.~~ Done (15+ commits, 3+ merged PRs).
+- ~~Run tests/CI and capture outputs; confirm RLS with two different user accounts.~~ Done: CI runs unit and integration tests, including cross-tenant isolation, on every PR.
+- Deploy and verify the public URL in incognito: deployed; **a full new-user pass on the live URL is still to be recorded.** Record the demo: **pending.** Personal reflection: drafted in `docs/reflection.md`.
 
 ## Assignment compliance crosswalk
-- **Phase 1:** seven-step validation and one-page PRD drafted in chat; primary user research pending.
+- **Phase 1:** seven-step validation and one-page PRD (`PRD.md`); primary user research pending.
 - **Phase 2:** architecture.md, spec.md, CLAUDE.md, agents.md, .cursorrules, this documented review.
-- **Phase 3:** scaffold, AI implementation, five commits, three unit tests, secret/input reviews — not yet built.
-- **Phase 4:** GitHub Actions, live host, env configuration, live tests, monitoring — not yet completed.
-- **Phase 5:** README, two-minute demonstration, one-page reflection, version 2 issue — not yet completed.
+- **Phase 3:** done. Scaffold, AI insights, sales and commissions, dashboard; unit and integration tests; secret and input reviews (`PHASE3-REPORT.md`).
+- **Phase 4:** done. GitHub Actions (`.github/workflows/ci.yml`), Vercel production deploy from `main`, environment variables in Vercel, migrations applied to hosted Supabase.
+- **Phase 5:** README rewritten; reflection in `docs/reflection.md`; Version 2 issue [#5](https://github.com/fcabredo85/barberpro-ai-insights/issues/5). Two-minute demo **pending**.
