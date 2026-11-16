@@ -2,7 +2,7 @@
 export const PROTECTED_PREFIXES = ["/dashboard", "/sales", "/settings", "/studio", "/appointments", "/onboarding"] as const;
 
 /** Pages a signed-in user has no reason to see. */
-const GUEST_ONLY_PATHS = ["/login"] as const;
+const GUEST_ONLY_PATHS = ["/login", "/forgot-password"] as const;
 
 export const DEFAULT_AUTHED_PATH = "/dashboard";
 

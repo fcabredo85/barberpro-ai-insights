@@ -1,11 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { authErrorMessage } from "@/lib/auth/errors";
 import type { FormState } from "@/lib/auth/form-state";
 import { safeRedirectPath } from "@/lib/auth/routes";
+import { siteOrigin } from "@/lib/auth/site-origin";
 import { createSupabaseServerClient } from "@/lib/db/supabase/server";
 import { fieldErrors, signInSchema, signUpSchema } from "@/lib/validation/auth";
 
@@ -34,15 +34,6 @@ export async function signInAction(_prev: FormState, formData: FormData): Promis
   }
 
   redirect(safeRedirectPath(formData.get("next")));
-}
-
-async function siteOrigin(): Promise<string> {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL;
-  if (configured) return configured.replace(/\/$/, "");
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-  const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  return `${proto}://${host}`;
 }
 
 export async function signUpAction(_prev: FormState, formData: FormData): Promise<FormState> {

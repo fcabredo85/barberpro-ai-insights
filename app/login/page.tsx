@@ -10,6 +10,7 @@ export const metadata: Metadata = { title: "Sign in" };
 
 const CALLBACK_ERRORS: Record<string, string> = {
   confirmation_failed: "That confirmation link is invalid or has expired. Please sign in or sign up again.",
+  reset_link_invalid: "That password reset link is invalid or has expired. Request a new one with \"Forgot password?\".",
 };
 
 interface LoginPageProps {

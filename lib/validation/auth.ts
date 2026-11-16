@@ -23,6 +23,42 @@ export const signUpSchema = z.object({
     .max(72, { error: "Password must be at most 72 characters." }),
 });
 
+/** A new password: same rules as sign-up, typed twice. */
+const newPasswordField = z
+  .string({ error: "Choose a new password." })
+  .min(8, { error: "Password must be at least 8 characters." })
+  .max(72, { error: "Password must be at most 72 characters." });
+
+export const passwordResetRequestSchema = z.object({ email: emailSchema });
+
+export const newPasswordSchema = z
+  .object({
+    password: newPasswordField,
+    confirmPassword: z.string({ error: "Type the new password again." }),
+  })
+  .refine((v) => v.password === v.confirmPassword, {
+    path: ["confirmPassword"],
+    error: "The passwords don't match.",
+  });
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string({ error: "Enter your current password." })
+      .min(1, { error: "Enter your current password." })
+      .max(72, { error: "Password is too long." }),
+    password: newPasswordField,
+    confirmPassword: z.string({ error: "Type the new password again." }),
+  })
+  .refine((v) => v.password === v.confirmPassword, {
+    path: ["confirmPassword"],
+    error: "The passwords don't match.",
+  })
+  .refine((v) => v.password !== v.currentPassword, {
+    path: ["password"],
+    error: "Choose a password different from your current one.",
+  });
+
 export const workspaceNameSchema = z.object({
   name: z
     .string({ error: "Enter your barbershop name." })
@@ -33,6 +69,8 @@ export const workspaceNameSchema = z.object({
 
 export type SignInInput = z.infer<typeof signInSchema>;
 export type SignUpInput = z.infer<typeof signUpSchema>;
+export type NewPasswordInput = z.infer<typeof newPasswordSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type WorkspaceNameInput = z.infer<typeof workspaceNameSchema>;
 
 /** Flatten Zod issues into one safe message per field. */

@@ -48,6 +48,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   return (
     <>
       <PageHeader title="Dashboard" description={`${workspace.name}: ${label} (Asia/Manila time).`} />
+      {params.password === "updated" ? (
+        <p role="status" className="rounded-md border bg-muted px-3 py-2 text-sm">
+          Your password has been updated.
+        </p>
+      ) : null}
 
       <DashboardFrame from={range.from} to={range.to} preset={range.preset} today={manilaToday()} rangeError={rangeError}>
         {report.isEmpty ? (
