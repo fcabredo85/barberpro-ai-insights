@@ -3,6 +3,7 @@
 An AI-powered dashboard for Philippine barbershops. Owners record service sales, get barber commissions calculated automatically, track performance, and get AI recommendations grounded in their own numbers. The app also includes a Virtual Try-On Studio that previews hairstyles on a customer's photo and books the appointment.
 
 - **Live app:** https://barberpro-ai-insights.vercel.app
+- **Video demo:** https://www.youtube.com/watch?v=O09A3tVaueE
 - **Repository:** https://github.com/fcabredo85/barberpro-ai-insights
 - **CI:** [GitHub Actions](https://github.com/fcabredo85/barberpro-ai-insights/actions) runs lint, typecheck, unit tests, build and integration tests on every pull request and push to `main`
 
